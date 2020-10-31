@@ -1,5 +1,6 @@
 # fp8sk
 File Archiver
+
 /* fp8sk file compressor/archiver.  Released on August 18, 2017 by surya kandau
 
     Copyright (C) 2008 Matt Mahoney, Serge Osnach, Alexander Ratushnyak,
@@ -21,38 +22,38 @@ File Archiver
 
 To install and use in Windows:
 
-- To install, put fp8.exe or a shortcut to it on your desktop.
-- To compress a file or folder, drop it on the fp8 icon.
-- To decompress, drop a .fp8 file on the icon.
+- To install, put fp8sk.exe or a shortcut to it on your desktop.
+- To compress a file or folder, drop it on the fp8sk icon.
+- To decompress, drop a .fp8sk file on the icon.
 
-A .fp8 extension is added for compression, removed for decompression.
+A .fp8sk extension is added for compression, removed for decompression.
 The output will go in the same folder as the input.
 
-While fp8 is working, a command window will appear and report
+While fp8sk is working, a command window will appear and report
 progress.  When it is done you can close the window by pressing
 ENTER or clicking [X].
 
 
 COMMAND LINE INTERFACE
 
-- To install, put fp8.exe somewhere in your PATH.
-- To compress:      fp8 [-N] file1 [file2...]
-- To decompress:    fp8 [-d] file1.fp8 [dir2]
-- To view contents: more < file1.fp8
+- To install, put fp8sk.exe somewhere in your PATH.
+- To compress:      fp8sk [-N] file1 [file2...]
+- To decompress:    fp8sk [-d] file1.fp8sk [dir2]
+- To view contents: more < file1.fp8sk
 
-The compressed output file is named by adding ".fp8" extension to
-the first named file (file1.fp8).  Each file that exists will be
+The compressed output file is named by adding ".fp8sk" extension to
+the first named file (file1.fp8sk).  Each file that exists will be
 added to the archive and its name will be stored without a path.
 The option -N specifies a compression level ranging from -0
 (fastest) to -8 (smallest).  The default is -5.  If there is
 no option and only one file, then the program will pause when
 finished until you press the ENTER key (to support drag and drop).
-If file1.fp8 exists then it is overwritten.
+If file1.fp8sk exists then it is overwritten.
 
-If the first named file ends in ".fp8" then it is assumed to be
+If the first named file ends in ".fp8sk" then it is assumed to be
 an archive and the files within are extracted to the same directory
 as the archive unless a different directory (dir2) is specified.
-The -d option forces extraction even if there is not a ".fp8"
+The -d option forces extraction even if there is not a ".fp8sk"
 extension.  If any output file already exists, then it is compared
 with the archive content and the first byte that differs is reported.
 No files are overwritten or deleted.  If there is only one argument
@@ -65,11 +66,11 @@ structure, except that empty directories are not stored, and file
 attributes (timestamps, permissions, etc.) are not preserved.
 During extraction, directories are created as needed.  For example:
 
-  fp8 -4 c:\tmp\foo bar
+  fp8sk -4 c:\tmp\foo bar
 
-compresses foo and bar (if they exist) to c:\tmp\foo.fp8 at level 4.
+compresses foo and bar (if they exist) to c:\tmp\foo.fp8sk at level 4.
 
-  fp8 -d c:\tmp\foo.fp8 .
+  fp8sk -d c:\tmp\foo.fp8sk .
 
 extracts foo and compares bar in the current directory.  If foo and bar
 are directories then their contents are extracted/compared.
@@ -83,8 +84,8 @@ are OK).
 
 TO COMPILE
 
-There are 2 files: fp8.cpp (C++) and paq7asm.asm (NASM/YASM).
-paq7asm.asm is the same as in paq7 and paq8x.  fp8.cpp recognizes the
+There are 2 files: fp8sk.cpp (C++) and paq7asm.asm (NASM/YASM).
+paq7asm.asm is the same as in paq7 and paq8x.  fp8sk.cpp recognizes the
 following compiler options:
 
   -DWINDOWS           (to compile in Windows)
@@ -110,7 +111,7 @@ on your C++ compiler.  In Linux, use "-f elf".
 Recommended compiler commands and optimizations:
 
   MINGW g++:
-    g++ fp8.cpp -DWINDOWS -lz -Wall -Wextra -O3 -static -static-libgcc -ofp8.exe 
+    g++ fp8sk.cpp -DWINDOWS -lz -Wall -Wextra -O3 -static -static-libgcc -ofp8sk.exe 
 
 
 MinGW produces faster executables than Borland or Mars, but Intel 9
@@ -123,7 +124,7 @@ An archive has the following format.  It is intended to be both
 human and machine readable.  The header ends with CTRL-Z (Windows EOF)
 so that the binary compressed data is not displayed on the screen.
 
-  fp8 -N CR LF
+  fp8sk -N CR LF
   size TAB filename CR LF
   size TAB filename CR LF
   ...
@@ -140,24 +141,24 @@ directories are stored with path relative to the compressed directory
 
 Then
 
-  fp8 archive \dir1\file1.txt \dir2
+  fp8sk archive \dir1\file1.txt \dir2
 
-will create archive.fp8 with the header:
+will create archive.fp8sk with the header:
 
-  fp8 -5
+  fp8sk -5
   123     file1.txt
   456     dir2/file2.txt
 
 The command:
 
-  fp8 archive.fp8 C:\dir3
+  fp8sk archive.fp8sk C:\dir3
 
 will create the files:
 
   C:\dir3\file1.txt
   C:\dir3\dir2\file2.txt
 
-Decompression will fail if the first 7 bytes are not "fp8 -".  Sizes
+Decompression will fail if the first 7 bytes are not "fp8sk -".  Sizes
 are stored as decimal numbers.  CR, LF, TAB, CTRL-Z are ASCII codes
 13, 10, 9, 26 respectively.
 
@@ -179,7 +180,7 @@ on the ability to predict the next bit accurately.
 
 MODEL MIXING
 
-fp8 uses a neural network to combine a large number of models.  The
+fp8sk uses a neural network to combine a large number of models.  The
 i'th model independently predicts
 p1_i = p(y_j = 1 | y_0..j-1), p0_i = 1 - p1_i.
 The network computes the next bit probabilty
@@ -408,7 +409,7 @@ adjacent quantized values of stretch(p1).  There are 2 APM stages in series:
 
 PREPROCESSING
 
-fp8 uses preprocessing transforms on certain data types to improve
+fp8sk uses preprocessing transforms on certain data types to improve
 compression.  To improve reliability, the decoding transform is
 tested during compression to ensure that the input file can be
 restored.  If the decoder output is not identical to the input file
@@ -604,4 +605,3 @@ Only 2 APM stages
 Reduced nubmer of prediction added to mixer per context (from 6 to 2)
 
 */
-
