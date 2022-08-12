@@ -1,22 +1,25 @@
 @echo off
 
-set incs=-DNDEBUG -DSTRICT -DNDEBUG -DWIN32 -D_WIN32 -DWINDOWS -Izlib ^
--D__LARGE64_FILES -DFILE_OFFSET_BITS=64 -Wno-multichar
+del *.exe
 
-set opts=-fstrict-aliasing -fomit-frame-pointer -ffast-math ^
--fexceptions -fno-stack-protector -fno-stack-check -fno-check-new ^
--flto -ffat-lto-objects -Wl,-flto -fuse-linker-plugin -Wl,-O -Wl,--sort-common -Wl,--as-needed -ffunction-sections
+set incs=-DSTRICT -DNDEBUG -DWIN32 -Izlib -Ibzip2 -DWINDOWS -DMT 
 
-rem -fprofile-use -fprofile-correction 
+set opts=-fstrict-aliasing -fomit-frame-pointer ^
+-fno-stack-protector -fno-stack-check -fno-check-new
 
-set gcc=C:\MinGW\bin\g++.exe -march=k8
+rem -flto -ffat-lto-objects -Wl,-flto -fuse-linker-plugin -Wl,-O -Wl,--sort-common -Wl,--as-needed -ffunction-sections
+rem -fprofile-use -fprofile-correction  -fwhole-program 
+
+set gcc=C:\MinGW\mingw\bin\g++.exe
 set path=%gcc%\..\
 
+del *.exe *.o
 
+%gcc%\..\gcc.exe -c -march=sandybridge -O9 %incs% %opts% @list_c
 
-"%gcc%/../gcc" -c -O9 -s %incs% %opts% -static @list_c
-
-%gcc% -O9 -s %incs% %opts% -static -fpermissive fp8sk.cpp *.o -o fp8sk.exe
+%gcc% -s -march=sandybridge -std=gnu++1z -O9 %incs% %opts% @list_cpp @list_o -static -o fp8sk42.exe
 
 del *.o
 pause
+
+
